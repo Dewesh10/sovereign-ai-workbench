@@ -48,6 +48,8 @@ jobs:
           pip install pytest httpx pytest-asyncio
 
       - name: Execute Backend PyTest Unit Tests
+        env:
+          PYTHONPATH: .
         run: |
           pytest backend/tests/test_backend.py -v
 
