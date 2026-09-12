@@ -9,11 +9,15 @@ import {
   Info,
   MapPin,
   Ruler,
-  Plus
+  Plus,
+  Box,
+  FileCode2
 } from 'lucide-react';
 import { useWorkbench } from '../../context/WorkbenchContext';
 import { BoundingBox, PinAnnotation } from '../../types/workbench';
 import { AssetHealthModal } from './AssetHealthModal';
+import { ThreeDAssemblyViewer } from './ThreeDAssemblyViewer';
+import { AudioWaveformVisualizer } from './AudioWaveformVisualizer';
 
 export const BlueprintViewer: React.FC = () => {
   const { 
@@ -31,6 +35,8 @@ export const BlueprintViewer: React.FC = () => {
   const [showBoundingBoxes, setShowBoundingBoxes] = useState<boolean>(true);
   const [hoveredBox, setHoveredBox] = useState<BoundingBox | null>(null);
   const [activeTool, setActiveTool] = useState<'select' | 'pin' | 'ruler'>('select');
+  const [viewMode, setViewMode] = useState<'2D' | '3D'>('2D');
+
 
   const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 0.25, 3.0));
   const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
@@ -56,62 +62,107 @@ export const BlueprintViewer: React.FC = () => {
     <div className="flex flex-col h-full bg-[#07090E] relative overflow-hidden">
       {/* Top Toolbar */}
       <div className="px-4 py-2.5 bg-[#0D111A] border-b border-[#1E2638] flex items-center justify-between z-20">
-        <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-cyan-400" />
-          <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-            Multimodal Blueprint & P&ID Schematic Canvas
-          </span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-cyan-400" />
+            <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+              Multimodal Industrial Inspector
+            </span>
+          </div>
+
+          {/* 2D / 3D Mode Switcher */}
+          <div className="flex items-center gap-1 bg-[#141B2D] p-1 rounded-lg border border-[#2A364F] text-xs font-mono">
+            <button
+              onClick={() => setViewMode('2D')}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded cursor-pointer transition-colors ${
+                viewMode === '2D' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <FileCode2 className="w-3.5 h-3.5" />
+              2D Schematic
+            </button>
+            <button
+              onClick={() => setViewMode('3D')}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded cursor-pointer transition-colors ${
+                viewMode === '3D' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Box className="w-3.5 h-3.5" />
+              3D CAD WebGL
+            </button>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Interactive Inspection Tools */}
-          <div className="flex items-center gap-1 bg-[#141B2D] p-1 rounded-lg border border-[#2A364F] text-xs font-mono">
-            <button
-              onClick={() => setActiveTool('select')}
-              className={`px-2 py-1 rounded cursor-pointer ${activeTool === 'select' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
-            >
-              Inspect
-            </button>
-            <button
-              onClick={() => setActiveTool('pin')}
-              className={`flex items-center gap-1 px-2 py-1 rounded cursor-pointer ${activeTool === 'pin' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
-            >
-              <MapPin className="w-3 h-3" />
-              Pin Drop
-            </button>
-          </div>
+          {/* Audio Waveform Live Visualizer */}
+          <AudioWaveformVisualizer mode="listening" />
 
-          {/* Layer Toggle */}
-          <button
-            onClick={() => setShowBoundingBoxes(!showBoundingBoxes)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono border transition-all cursor-pointer ${
-              showBoundingBoxes 
-                ? 'bg-cyan-950/80 border-cyan-500/50 text-cyan-300' 
-                : 'bg-slate-900 border-slate-700 text-slate-400'
-            }`}
-          >
-            <Eye className="w-3.5 h-3.5" />
-            <span>Bounding Box Layer</span>
-          </button>
+          {viewMode === '2D' && (
+            <>
+              {/* Interactive Inspection Tools */}
+              <div className="flex items-center gap-1 bg-[#141B2D] p-1 rounded-lg border border-[#2A364F] text-xs font-mono">
+                <button
+                  onClick={() => setActiveTool('select')}
+                  className={`px-2 py-1 rounded cursor-pointer ${activeTool === 'select' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                >
+                  Inspect
+                </button>
+                <button
+                  onClick={() => setActiveTool('pin')}
+                  className={`flex items-center gap-1 px-2 py-1 rounded cursor-pointer ${activeTool === 'pin' ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'}`}
+                >
+                  <MapPin className="w-3 h-3" />
+                  Pin Drop
+                </button>
+              </div>
 
-          {/* Zoom controls */}
-          <div className="flex items-center gap-1 bg-[#141B2D] p-1 rounded-lg border border-[#2A364F] text-xs font-mono text-slate-300">
-            <button onClick={handleZoomOut} className="p-1 hover:bg-slate-800 rounded cursor-pointer" title="Zoom Out">
-              <ZoomOut className="w-3.5 h-3.5" />
-            </button>
-            <span className="px-2 font-bold text-cyan-300">{Math.round(zoomLevel * 100)}%</span>
-            <button onClick={handleZoomIn} className="p-1 hover:bg-slate-800 rounded cursor-pointer" title="Zoom In">
-              <ZoomIn className="w-3.5 h-3.5" />
-            </button>
-            <button onClick={handleResetZoom} className="p-1 hover:bg-slate-800 rounded ml-1 cursor-pointer" title="Reset Zoom">
-              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
-            </button>
-          </div>
+              {/* Layer Toggle */}
+              <button
+                onClick={() => setShowBoundingBoxes(!showBoundingBoxes)}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono border transition-all cursor-pointer ${
+                  showBoundingBoxes 
+                    ? 'bg-cyan-950/80 border-cyan-500/50 text-cyan-300' 
+                    : 'bg-slate-900 border-slate-700 text-slate-400'
+                }`}
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Bounding Box Layer</span>
+              </button>
+
+              {/* Zoom controls */}
+              <div className="flex items-center gap-1 bg-[#141B2D] p-1 rounded-lg border border-[#2A364F] text-xs font-mono text-slate-300">
+                <button onClick={handleZoomOut} className="p-1 hover:bg-slate-800 rounded cursor-pointer" title="Zoom Out">
+                  <ZoomOut className="w-3.5 h-3.5" />
+                </button>
+                <span className="px-2 font-bold text-cyan-300">{Math.round(zoomLevel * 100)}%</span>
+                <button onClick={handleZoomIn} className="p-1 hover:bg-slate-800 rounded cursor-pointer" title="Zoom In">
+                  <ZoomIn className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={handleResetZoom} className="p-1 hover:bg-slate-800 rounded ml-1 cursor-pointer" title="Reset Zoom">
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {/* Main Canvas Container */}
       <div className="flex-1 overflow-auto p-4 flex items-center justify-center relative cyber-grid-bg">
+        {viewMode === '3D' ? (
+          <div className="w-full h-full max-w-6xl">
+            <ThreeDAssemblyViewer
+              onSelectPin={() => {
+                if (activeScenario.boundingBoxes.length > 0) {
+                  setSelectedBoundingBox(activeScenario.boundingBoxes[0]);
+                  if (activeScenario.boundingBoxes[0].assetHealth) {
+                    setSelectedAssetHealth(activeScenario.boundingBoxes[0].assetHealth);
+                  }
+                }
+              }}
+            />
+          </div>
+        ) : (
         <div 
           onClick={handleCanvasClick}
           className={`relative transition-transform duration-200 ease-out shadow-2xl rounded-xl overflow-hidden border border-[#1E2638] ${
@@ -190,6 +241,7 @@ export const BlueprintViewer: React.FC = () => {
             </div>
           ))}
         </div>
+        )}
       </div>
 
       {/* Footer Spatial Status Bar */}
