@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: sovereign-ai-frontend
+    env: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  - type: web
+    name: sovereign-ai-backend-gateway
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: python backend/main.py
+    envVars:
+      - key: PORT
+        value: 8000
