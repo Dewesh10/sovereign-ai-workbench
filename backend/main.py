@@ -1,18 +1,17 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Dict, Any, Optional, List
+"""
+NEXUS Sovereign AI - Target V2 Architecture Gateway
+Registers APIRouters for Query Execution, Security Audit, Evaluation Benchmarks, and WebSockets.
+"""
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from backend.config import settings
-from backend.agents.orchestrator import swarm_orchestrator
-from backend.sandbox.python_runner import sandbox_runner
-from backend.rag.vector_store import rag_engine
-from backend.evaluation.eval_benchmark import benchmark_evaluator
+from backend.api.routers import query, security, evaluation
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Production Sovereign Agentic AI Workbench Microservices API"
+    description="NEXUS Sovereign AI Operating System - Target V2 Architecture Gateway"
 )
 
 app.add_middleware(
@@ -23,12 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class QueryRequest(BaseModel):
-    query: str
-    scenario_id: Optional[str] = "mrpl-offshore"
-
-class SandboxRunRequest(BaseModel):
-    code: str
+# Register V2 Routers
+app.include_router(query.router)
+app.include_router(security.router)
+app.include_router(evaluation.router)
 
 @app.get("/health")
 def health_check():
@@ -36,24 +33,9 @@ def health_check():
         "status": "HEALTHY",
         "air_gap_mode": settings.AIR_GAP_MODE,
         "model": settings.LOCAL_MODEL_NAME,
-        "version": settings.VERSION
+        "version": settings.VERSION,
+        "architecture": "Target V2 Sovereign Agent Platform"
     }
-
-@app.post("/api/v1/query")
-def process_query(req: QueryRequest):
-    return swarm_orchestrator.process_industrial_query(req.query, req.scenario_id)
-
-@app.post("/api/v1/sandbox/run")
-def execute_python_code(req: SandboxRunRequest):
-    return sandbox_runner.execute_code(req.code)
-
-@app.get("/api/v1/rag/citations")
-def search_rag(query: str):
-    return {"citations": rag_engine.search_vectors(query)}
-
-@app.get("/api/v1/benchmark/run")
-def run_benchmark():
-    return benchmark_evaluator.run_benchmark_suite()
 
 if __name__ == "__main__":
     import uvicorn
