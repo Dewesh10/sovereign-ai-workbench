@@ -23,8 +23,7 @@ Only the latest release versions receive security patches and threat updates.
 If you discover a security vulnerability, sandbox escape vector, or policy bypass within NEXUS Sovereign AI:
 
 1. **Do NOT open a public GitHub issue.**
-2. Send a encrypted security advisory report to:  
-   `security@nexus-sovereign.internal` or contact the repository owner `Dewesh10`.
+2. Submit a security advisory report directly to the repository maintainer **[@Dewesh10](https://github.com/Dewesh10)**.
 3. Include detailed steps to reproduce the threat vector, sandbox syscall trace, or prompt injection payload.
 
 ### Response Timeline
