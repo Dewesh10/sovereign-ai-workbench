@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useWorkbench } from '../../context/WorkbenchContext';
 import { TelemetryChart } from './TelemetryChart';
+import { AgentSandboxManager } from './AgentSandboxManager';
 
 export const MultiFileIDE: React.FC = () => {
   const { 
@@ -177,6 +178,8 @@ export const MultiFileIDE: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <AgentSandboxManager />
 
       <TelemetryChart />
     </div>
