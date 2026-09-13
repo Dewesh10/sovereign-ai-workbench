@@ -1,11 +1,13 @@
 # 🛡️ NEXUS SOVEREIGN AI
 > **Enterprise Air-Gapped Multimodal Agentic AI Operating System for Confidential Industrial Knowledge Work**
 
+[![Live_Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-brightgreen.svg?style=for-the-badge&logo=github)](https://dewesh10.github.io/sovereign-ai-workbench)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Production-Enterprise_Ready-emerald.svg)]()
 [![Air-Gap](https://img.shields.io/badge/Air--Gap-100%25_Verified-cyan.svg)]()
 [![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
-[![Code_Style](https://img.shields.io/badge/Code_Style-Prettier_&_ESLint-purple.svg)]()
+
+> 🌐 **Live Prototype Access**: Play with the live web application hosted directly on GitHub Pages at **[https://dewesh10.github.io/sovereign-ai-workbench](https://dewesh10.github.io/sovereign-ai-workbench)**
 
 ---
 
